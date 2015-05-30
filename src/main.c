@@ -92,9 +92,21 @@ static void handle_weather_update(WeatherData* weather) {
 }
 
 static void handle_weather_error(WeatherError error) {
-  // We apparently don't actually care what the error was at all.
-  weather_layer_set_icon(s_weather_layer, WEATHER_ICON_PHONE_ERROR);
-
+  if(error != WEATHER_E_OK) {
+    WeatherIcon icon;
+    switch(error) {
+    case WEATHER_E_NETWORK:
+      icon = WEATHER_ICON_CLOUD_ERROR;
+      break;
+    case WEATHER_E_DISCONNECTED:
+      icon = WEATHER_ICON_NOT_AVAILABLE;
+      break;
+    default:
+      icon = WEATHER_ICON_PHONE_ERROR;
+      break;
+    }
+    weather_layer_set_icon(s_weather_layer, icon);
+  }
   mark_weather_loaded();
 }
 
@@ -111,7 +123,7 @@ static void init(void) {
   window_set_background_color(s_window, GColorBlack);
 
   init_network();
-  set_weather_update_handler(handle_weather_update);
+   set_weather_update_handler(handle_weather_update);
   set_weather_error_handler(handle_weather_error);
 
   s_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18));
