@@ -123,7 +123,7 @@ static void init(void) {
   window_set_background_color(s_window, GColorBlack);
 
   init_network();
-   set_weather_update_handler(handle_weather_update);
+  set_weather_update_handler(handle_weather_update);
   set_weather_error_handler(handle_weather_error);
 
   s_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18));
