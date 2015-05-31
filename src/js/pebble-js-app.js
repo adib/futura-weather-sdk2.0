@@ -29,8 +29,14 @@ function locationSuccess(pos) {
 
 function locationError(err) {
     console.warn('Location error (' + err.code + '): ' + err.message);
-    Pebble.sendAppMessage({ "error": "Loc unavailable" });
-    updateInProgress = false;
+    Pebble.sendAppMessage({ "error": "Loc unavailable" }, 
+        function(e) {
+            // success   
+            updateInProgress = false;
+        }, function(e) {
+            // failure
+            updateInProgress = false;
+        });
 }
 
 function fetchWeather(latitude, longitude) {
@@ -68,13 +74,24 @@ function fetchWeather(latitude, longitude) {
                         "sunrise": sunrise,
                         "sunset": sunset,
                         "current_time": current_time
+                    }, function(e) {
+                        // success   
+                        updateInProgress = false;
+                    }, function(e) {
+                        // failure
+                        updateInProgress = false;
                     });
-                    updateInProgress = false;
                 }
             } else {
                 console.log("Error");
-                updateInProgress = false;
-                Pebble.sendAppMessage({ "error": "HTTP Error" });
+                Pebble.sendAppMessage({ "error": "HTTP Error" }, 
+                    function(e) {
+                        // success   
+                        updateInProgress = false;
+                    }, function(e) {
+                        // failure
+                        updateInProgress = false;
+                    });
             }
         }
     };
