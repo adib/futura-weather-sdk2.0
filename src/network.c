@@ -44,7 +44,7 @@ static void appmsg_in_received(DictionaryIterator *received, void *context) {
   } else {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got message with unknown keys... temperature=%p condition=%p error=%p",
       temperature_tuple, condition_tuple, error_tuple);
-    report_error(WEATHER_E_PHONE);
+    report_error(WEATHER_E_PHONE_TRANSIENT);
   }
 }
 
@@ -54,8 +54,19 @@ static void appmsg_out_sent(DictionaryIterator *sent, void *context) {
 
 static void appmsg_in_dropped(AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "In dropped: %i", reason);
-  // Err on the side of caution here because infinite loops are bad.
-  report_error(WEATHER_E_PHONE);
+
+  WeatherError error;  
+  switch (reason) {
+    case APP_MSG_BUSY:
+    case APP_MSG_BUFFER_OVERFLOW:
+      error = WEATHER_E_PHONE_TRANSIENT;
+      break;
+    default:
+      error = WEATHER_E_PHONE;
+      break;
+  }
+
+  report_error(error);
 }
 
 static void appmsg_out_failed(DictionaryIterator *failed, AppMessageResult reason, void *context) {
@@ -72,6 +83,8 @@ static void appmsg_out_failed(DictionaryIterator *failed, AppMessageResult reaso
       break;
     case APP_MSG_SEND_REJECTED:
     case APP_MSG_SEND_TIMEOUT:
+      error = WEATHER_E_PHONE_TRANSIENT;
+      break;
     default:
       error = WEATHER_E_PHONE;
       break;
@@ -110,6 +123,11 @@ void close_network(void) {
 }
 
 void request_weather(void) {
+  if(!s_is_connected) {
+    // the phone is not connected, thus don't request aything
+    return;
+  }
+
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
 

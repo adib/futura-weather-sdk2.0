@@ -7,6 +7,8 @@
 #define DATE_FRAME      (GRect(1, 66, 144, 168-62))
 #define LOADING_TIMEOUT 30000
 
+static void handle_tap(AccelAxisType axis, int32_t direction);
+
 /* Static variables to keep track of the UI elements */
 static Window *s_window;
 static TextLayer *s_date_layer;
@@ -88,6 +90,9 @@ static void handle_weather_update(WeatherData* weather) {
   const bool is_night = (weather->current_time < weather->sunrise || weather->current_time > weather->sunset);
   weather_layer_set_icon(s_weather_layer, weather_icon_for_condition(weather->condition, is_night));
 
+  // deactivate tap to reload
+  accel_tap_service_unsubscribe();
+
   mark_weather_loaded();
 }
 
@@ -97,9 +102,16 @@ static void handle_weather_error(WeatherError error) {
     switch(error) {
     case WEATHER_E_NETWORK:
       icon = WEATHER_ICON_CLOUD_ERROR;
+      // activate tap to reload data when we have a network I/O error
+      accel_tap_service_subscribe(handle_tap);
       break;
     case WEATHER_E_DISCONNECTED:
+      // activate tap to reload data when we have a phone I/O error
+      accel_tap_service_subscribe(handle_tap);
       icon = WEATHER_ICON_NOT_AVAILABLE;
+      break;
+    case WEATHER_E_PHONE_TRANSIENT:
+      icon =  WEATHER_ICON_PHONE_QUESTION;
       break;
     default:
       icon = WEATHER_ICON_PHONE_ERROR;
@@ -115,6 +127,10 @@ static void handle_loading_timeout(void* unused) {
   if (!s_weather_loaded) {
     handle_weather_error(WEATHER_E_PHONE);
   }
+}
+
+static void handle_tap(AccelAxisType axis, int32_t direction) {
+  request_weather();
 }
 
 static void init(void) {
