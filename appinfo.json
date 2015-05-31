@@ -92,7 +92,7 @@
       },
       {
         "type": "font",
-        "name": "FUTURA_CONDENSED_53",
+        "name": "SOURCE_SANS_PRO_SEMIBOLD_58",
         "file": "fonts/SourceSansPro-Semibold.otf",
         "characterRegex": "[0-9:APM ]"
       },
@@ -147,24 +147,24 @@
         "file": "images/wind.png"
       },
       {
-        "name": "FUTURA_18",
+        "name": "SOURCE_SANS_PRO_REGULAR_24",
         "trackingAdjust": 3,
         "characterRegex": "[A-Za-z0-9 ]",
-        "file": "fonts/SourceSansPro-Light.otf",
+        "file": "fonts/SourceSansPro-Regular.otf",
         "type": "font"
       },
       {
-        "name": "FUTURA_40",
+        "name": "SOURCE_SANS_PRO_REGULAR_47",
         "trackingAdjust": -4,
         "characterRegex": "[0-9\u00b0 -]",
-        "file": "fonts/SourceSansPro-ExtraLight.otf",
+        "file": "fonts/SourceSansPro-Regular.otf",
         "type": "font"
       },
       {
-        "name": "FUTURA_35",
+        "name": "SOURCE_SANS_PRO_REGULAR_42",
         "trackingAdjust": -4,
         "characterRegex": "[0-9\u00b0 -]",
-        "file": "fonts/SourceSansPro-ExtraLight.otf",
+        "file": "fonts/SourceSansPro-Regular.otf",
         "type": "font"
       }
     ]

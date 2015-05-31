@@ -45,8 +45,8 @@ WeatherLayer *weather_layer_create(GRect frame)
   WeatherLayer *weather_layer = layer_create_with_data(frame, sizeof(WeatherLayerData));
   WeatherLayerData *wld = layer_get_data(weather_layer);
 
-  s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_40));
-  s_small_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_35));
+  s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SOURCE_SANS_PRO_REGULAR_47));
+  s_small_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SOURCE_SANS_PRO_REGULAR_42));
 
   // Add background layer
   wld->temp_layer_background = text_layer_create(GRect(0, 10, 144, 68));
@@ -54,7 +54,7 @@ WeatherLayer *weather_layer_create(GRect frame)
   layer_add_child(weather_layer, text_layer_get_layer(wld->temp_layer_background));
 
   // Add temperature layer
-  wld->temp_layer = text_layer_create(GRect(70, 19, 72, 80));
+  wld->temp_layer = text_layer_create(GRect(70, 13, 72, 80));
   text_layer_set_background_color(wld->temp_layer, GColorClear);
   text_layer_set_text_alignment(wld->temp_layer, GTextAlignmentCenter);
   text_layer_set_font(wld->temp_layer, s_large_font);
