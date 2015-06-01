@@ -111,6 +111,8 @@ static void handle_weather_error(WeatherError error) {
       icon = WEATHER_ICON_NOT_AVAILABLE;
       break;
     case WEATHER_E_PHONE_TRANSIENT:
+      // activate tap to reload data when we have a phone I/O error
+      accel_tap_service_subscribe(handle_tap);
       icon =  WEATHER_ICON_PHONE_QUESTION;
       break;
     default:
@@ -130,7 +132,18 @@ static void handle_loading_timeout(void* unused) {
 }
 
 static void handle_tap(AccelAxisType axis, int32_t direction) {
-  request_weather();
+  if(s_weather_loaded && bluetooth_connection_service_peek()) {
+    if (s_loading_timeout == NULL) {
+      s_loading_timeout = app_timer_register(LOADING_TIMEOUT, handle_loading_timeout, NULL);
+    }
+
+    s_weather_loaded = false;
+    step_loading_animation();
+    tick_timer_service_subscribe(SECOND_UNIT, handle_tick);
+    request_weather();
+  } else {
+    handle_weather_error(WEATHER_E_DISCONNECTED);
+  }
 }
 
 static void init(void) {
